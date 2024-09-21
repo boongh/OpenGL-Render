@@ -38,8 +38,6 @@ Texture::Texture(const char* texturePath, GLenum typeIn, int unit) {
 
         std::cout << "FAILED TO LOAD TEXTURE " << unit;
     }
-
-    glBindTexture(GL_TEXTURE_2D, 0);
     //free image to free space
     stbi_image_free(data);
 
