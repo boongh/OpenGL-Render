@@ -42,7 +42,7 @@ int main()
     }
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    Shader shader("D:/OpenGL/OpenGL/OpenGL/shader/vertex.vs", "D:/OpenGL/OpenGL/OpenGL/shader/fragment.fs");
+    Shader shader("./shader/vertex.vs", "./shader/fragment.fs");
     shader.use();
 
     //vertices stuff magic
@@ -91,26 +91,10 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(edges), edges, GL_STATIC_DRAW);
 
 
-    //Texture wrapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    Texture texture("./Texture/container.jpg", GL_TEXTURE_2D, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, 0);
 
-    //Texture Minimap Option/ filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    Texture texture("D:/OpenGL/OpenGL/OpenGL/Texture/container.jpg", GL_TEXTURE_2D, 0);
-
-    //Texture wrapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    //Texture Minimap Option/ filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    Texture smileyface("D:/OpenGL/OpenGL/OpenGL/Texture/awesomeface.png", GL_TEXTURE_2D, 1);
-
+    Texture smileyface("./Texture/awesomeface.png", GL_TEXTURE_2D, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, 1);
 
     float time;
     int widthFrame, heightFrame;

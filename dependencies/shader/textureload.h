@@ -12,11 +12,17 @@ private:
 public:
 
     //load image texture into class
-    Texture(const char* texturepath, GLenum type, int unit);
+    //initialize with filter and wrapper
+    Texture(const char* texturepath, GLenum type, GLint minfilter, GLint magfilter, GLint texturewrapS, GLint texturewrapT, int unit);
     ~Texture();
 
     //bind the texture to OpenGL
+    //incase for re-setting the filter
     void TextureBind();
+
+    void parameterize(GLint minfilter, GLint magfilter, GLint texturewrapS, GLint texturewrapT);
+
+    //activate the texture
     void TextureActive();
 };
 
