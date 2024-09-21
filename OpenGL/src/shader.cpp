@@ -1,0 +1,158 @@
+#include <glad/glad.h> // include glad to get all the required OpenGL headers
+#include <GLFW/glfw3.h>
+#include <shader.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+
+
+Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+
+    // 2. compile shaders
+    unsigned int vertex, fragment;
+
+    // vertex Shader
+    CompileShader(&vertex, vertexPath, GL_VERTEX_SHADER, "ERROR VERTEX");
+    CompileShader(&fragment, fragmentPath, GL_FRAGMENT_SHADER, "ERROR FRAGMENT");
+
+    // shader Program
+    m_program = glCreateProgram();
+    glAttachShader(m_program, vertex);
+    glAttachShader(m_program, fragment);
+    glLinkProgram(m_program);
+
+    // print linking errors if any
+    int success;
+    char infoLog[512];
+    glGetProgramiv(m_program, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        glGetProgramInfoLog(m_program, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    // delete the shaders as they're linked into our program now and no longer necessary
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+}
+
+//Destructor for freeing memory
+Shader::~Shader() {
+    int success;
+    char infoLog[512];
+    glDeleteProgram(m_program);
+    glGetProgramiv(m_program, GL_DELETE_STATUS, &success);
+    if (!success)
+    {
+        glGetProgramInfoLog(m_program, 512, NULL, infoLog);
+        std::cout << "ERROR::PROGRAM::DELETION::FAILED\n" << infoLog << std::endl;
+    };
+}
+
+void Shader::checkError(unsigned int shader, GLenum checkFor, const char* errorMessage) {
+    int success;
+    char infoLog[512];
+
+    glGetShaderiv(shader, checkFor, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        std::cout << errorMessage << "\n" << infoLog << std::endl;
+    };
+}
+
+void Shader::CompileShader(unsigned int* target, const char* sourcePath, GLenum mode, const char* errorMes) {
+
+    // 1. retrieve the vertex/fragment source code from filePath
+    std::string code;
+    std::ifstream ShaderFile;
+    // ensure ifstream objects can throw exceptions:
+    ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try
+    {
+        // open files
+        ShaderFile.open(sourcePath);
+        std::stringstream ShaderStream;
+        // read file's buffer contents into streams
+        ShaderStream << ShaderFile.rdbuf();
+        // close file handlers
+        ShaderFile.close();
+        // convert stream into string
+        code = ShaderStream.str();
+    }
+    catch (std::ifstream::failure e)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+    }
+
+    const char* ShaderCode = code.c_str();
+
+    std::cout << ShaderCode << "\n";
+
+    // 2. compile shaders
+    unsigned int shader;
+    int success;
+    char infoLog[512];
+
+    // vertex Shader
+    shader = glCreateShader(mode);
+    glShaderSource(shader, 1, &ShaderCode, NULL);
+    glCompileShader(shader);
+    // print compile errors if any
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        std::cout << errorMes << infoLog << std::endl;
+    };
+
+    *target = shader;
+}
+
+void Shader::use() {
+    glUseProgram(m_program);
+}
+
+// Overload for a single int (glUniform1i)
+void Shader::SetInt(const std::string& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(m_program, name.c_str()), value);
+}
+// Overload for two ints (glUniform2i) for setting an ivec2
+void Shader::SetInt(const std::string& name, int value1, int value2) const
+{
+    glUniform2i(glGetUniformLocation(m_program, name.c_str()), value1, value2);
+}
+// Overload for three ints (glUniform3i) for setting an ivec3
+void Shader::SetInt(const std::string& name, int value1, int value2, int value3) const
+{
+    glUniform3i(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3);
+}
+// Overload for four ints (glUniform4i) for setting an ivec4
+void Shader::SetInt(const std::string& name, int value1, int value2, int value3, int value4) const
+{
+    glUniform4i(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3, value4);
+}
+
+// Overload for a single float (glUniform1f)
+void Shader::SetFloat(const std::string& name, float value) const
+{
+    glUniform1f(glGetUniformLocation(m_program, name.c_str()), value);
+}
+// Overload for two floats (glUniform2f) for setting a vec2
+void Shader::SetFloat(const std::string& name, float value1, float value2) const
+{
+    glUniform2f(glGetUniformLocation(m_program, name.c_str()), value1, value2);
+}
+// Overload for three floats (glUniform3f) for setting a vec3
+void Shader::SetFloat(const std::string& name, float value1, float value2, float value3) const
+{
+    glUniform3f(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3);
+}
+// Overload for four floats (glUniform4f) for setting a vec4
+void Shader::SetFloat(const std::string& name, float value1, float value2, float value3, float value4) const
+{
+    glUniform4f(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3, value4);
+}
