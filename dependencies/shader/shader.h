@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <glm.hpp>
 
 class Shader{
 
@@ -18,6 +19,21 @@ private:
 
 public:
 
+    enum MatSizeShader
+    {
+        M2,
+        M2X2,
+        M2X3,
+        M2X4,
+        M3,
+        M3X2,
+        M3X3,
+        M3X4,
+        M4,
+        M4X2,
+        M4X3,
+        M4X4,
+    };
 
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
@@ -49,6 +65,19 @@ public:
     void SetFloat(const std::string& name, float value1, float value2, float value3) const;
     // Overload for a single float (glUniform4f)
     void SetFloat(const std::string& name, float value1, float value2, float value3, float value4) const;
+
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x2 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x3 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x4 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x2 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x3 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x4 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x2 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat);
+    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x4 mat);
 
 };
 

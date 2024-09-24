@@ -5,6 +5,9 @@
 #include <math.h>
 #include <stb_image.h>
 #include <textureload.h>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -20,6 +23,8 @@ void processInput(GLFWwindow* window) {
 
 int main()
 {
+
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -90,21 +95,22 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(edges), edges, GL_STATIC_DRAW);
 
-
+    
     Texture texture("./Texture/container.jpg", GL_TEXTURE_2D, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, 0);
 
-
     Texture smileyface("./Texture/awesomeface.png", GL_TEXTURE_2D, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, 1);
+    
 
     float time;
     int widthFrame, heightFrame;
     double mouseX, mouseY;
 
-    /*
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
-    */
+
+
+
 
     while (!glfwWindowShouldClose(window))
     {   
@@ -124,10 +130,14 @@ int main()
 
         glfwGetCursorPos(window, &mouseX, &mouseY);
         glfwGetFramebufferSize(window, &widthFrame, &heightFrame);
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, time, glm::vec3(1.0, 0.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
         shader.SetInt("ourTexture", 0);
         shader.SetInt("smileytexture", 1);
         shader.SetFloat("u_time", time);
+        shader.SetMatrix("trans", 1, GL_FALSE, trans);
         shader.SetFloat("cursorPos", (float)mouseX, (float)mouseY);
         shader.SetFloat("u_resolution", (float)widthFrame, (float)heightFrame);
         //std::cout << mouseX << " " << mouseY << " " << widthFrame << " " << heightFrame <<  std::endl;

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <gtc/type_ptr.hpp>
 
 
 
@@ -115,44 +116,73 @@ void Shader::use() {
     glUseProgram(m_program);
 }
 
-// Overload for a single int (glUniform1i)
 void Shader::SetInt(const std::string& name, int value) const
 {
     glUniform1i(glGetUniformLocation(m_program, name.c_str()), value);
 }
-// Overload for two ints (glUniform2i) for setting an ivec2
 void Shader::SetInt(const std::string& name, int value1, int value2) const
 {
     glUniform2i(glGetUniformLocation(m_program, name.c_str()), value1, value2);
 }
-// Overload for three ints (glUniform3i) for setting an ivec3
 void Shader::SetInt(const std::string& name, int value1, int value2, int value3) const
 {
     glUniform3i(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3);
 }
-// Overload for four ints (glUniform4i) for setting an ivec4
 void Shader::SetInt(const std::string& name, int value1, int value2, int value3, int value4) const
 {
     glUniform4i(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3, value4);
 }
 
-// Overload for a single float (glUniform1f)
 void Shader::SetFloat(const std::string& name, float value) const
 {
     glUniform1f(glGetUniformLocation(m_program, name.c_str()), value);
 }
-// Overload for two floats (glUniform2f) for setting a vec2
 void Shader::SetFloat(const std::string& name, float value1, float value2) const
 {
     glUniform2f(glGetUniformLocation(m_program, name.c_str()), value1, value2);
 }
-// Overload for three floats (glUniform3f) for setting a vec3
 void Shader::SetFloat(const std::string& name, float value1, float value2, float value3) const
 {
     glUniform3f(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3);
 }
-// Overload for four floats (glUniform4f) for setting a vec4
 void Shader::SetFloat(const std::string& name, float value1, float value2, float value3, float value4) const
 {
     glUniform4f(glGetUniformLocation(m_program, name.c_str()), value1, value2, value3, value4);
 }
+
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2 mat)  {
+    glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x2 mat) {
+    glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x3 mat) {
+    glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x4 mat) {
+    glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3 mat)  {
+    glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x2 mat) {
+    glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x3 mat) {
+    glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x4 mat) {
+    glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4 mat)  {
+    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x2 mat) {
+    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat) {
+    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
+void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x4 mat) {
+    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+};
