@@ -153,9 +153,6 @@ void Shader::SetFloat(const std::string& name, float value1, float value2, float
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2 mat)  {
     glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
-void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x2 mat) {
-    glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
-};
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x3 mat) {
     glUniformMatrix2fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
@@ -168,9 +165,6 @@ void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, 
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x2 mat) {
     glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
-void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x3 mat) {
-    glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
-};
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x4 mat) {
     glUniformMatrix3fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
@@ -181,8 +175,5 @@ void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, 
     glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat) {
-    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
-};
-void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x4 mat) {
     glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };

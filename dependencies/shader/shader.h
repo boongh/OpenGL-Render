@@ -48,7 +48,7 @@ public:
     void use();
 
     // utility uniform functions
-    void setBool(const std::string& name, bool value) const;
+    void SetBool(const std::string& name, bool value) const;
     // Overload for a single int (glUniform1i)
     void SetInt(const std::string& name, int value) const;
     // Overload for a single int (glUniform2i)
@@ -67,18 +67,13 @@ public:
     void SetFloat(const std::string& name, float value1, float value2, float value3, float value4) const;
 
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2 mat);
-    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x2 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x3 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat2x4 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x2 mat);
-    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x3 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat3x4 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x2 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat);
-    void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x4 mat);
-
 };
-
 #endif
