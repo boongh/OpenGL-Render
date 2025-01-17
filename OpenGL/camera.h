@@ -18,7 +18,7 @@ public:
 		float fov, float aspectRatio,
 		float nearClip, float farClip);
 	void SetCameraPosition(glm::vec3 pos);
-	void MoveCameraAtSpeed(glm::vec3 pos, float time);
+	void MoveCamera(glm::vec3 pos, float time);
 
 };
 

@@ -92,10 +92,13 @@ void Shader::CompileShader(unsigned int* target, const char* sourcePath, GLenum 
 
     std::cout << ShaderCode << "\n";
 
+
+
     // 2. compile shaders
     unsigned int shader;
     int success;
     char infoLog[512];
+    std::cout << mode;
 
     // vertex Shader
     shader = glCreateShader(mode);
