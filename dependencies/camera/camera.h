@@ -29,6 +29,10 @@ public:
 	glm::vec3 cameraUp;
 	glm::vec3 cameraRight;
 
+	float fov;
+	float nearClip;
+	float farClip;
+	float aspectRatio;
 	glm::mat4 view;
 	glm::mat4 projection;
 
@@ -43,6 +47,8 @@ public:
 	void SetCameraPosition(glm::vec3 pos);
 	void MoveCamera(glm::vec3 direction, float speed);
 	void TurnCamera(glm::vec3 front);
+	void ZoomCamera(float factor);
+	void EaseZoomCamera(float target);
 };
 
 #endif

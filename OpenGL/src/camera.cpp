@@ -6,7 +6,11 @@
 #include <gtc/type_ptr.hpp>
 
 Camera::Camera(glm::vec3 pos, glm::vec3 lookAt, glm::vec3 up, Shader* shaderRefIn, bool viewLockIn,
-	float fov, float nearClip, float farClip, float aspectRatio) {
+	float fovIn, float nearClipIn, float farClipIn, float aspectRatioIn) {
+	fov = fovIn;
+	nearClip = nearClipIn;
+	farClip = farClipIn;
+	aspectRatio = aspectRatioIn;
 	viewLock = viewLockIn;
 	cameraPos = pos;
 	cameraFacing = lookAt;
@@ -60,6 +64,19 @@ void Camera::SetCameraPosition(glm::vec3 pos) {
 	cameraPos = pos;
 	
 	UpdateView(pos, cameraFacing, cameraUp);
+}
+
+void Camera::ZoomCamera(float factor) {
+	fov -= factor * 0.1f;
+	projection = glm::perspective(fov, aspectRatio, nearClip, farClip);
+	shaderRef->SetMatrix("projection", 1, GL_FALSE, projection);
+}
+
+void Camera::EaseZoomCamera(float target) {
+	float dif = target - fov;
+	fov -= dif;
+	projection = glm::perspective(fov, aspectRatio, nearClip, farClip);
+	shaderRef->SetMatrix("projection", 1, GL_FALSE, projection);
 }
 
 void Camera::MoveCamera(glm::vec3 direction, float speed) {

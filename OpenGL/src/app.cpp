@@ -17,7 +17,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window, Camera* camera, float deltaSPD);
 void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void foo(GLFWwindow* window, double xpos, double ypos);
+void ScrollCallback(GLFWwindow* window, double xpos, double ypos);
 
 float xposBuffer = 480;
 float yposBuffer = 270;
@@ -136,11 +136,12 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, MouseMoveCallback);
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
+    glfwSetScrollCallback(window, ScrollCallback);
 
     Shader shader =  Shader("./shader/vertex.vs", "./shader/fragment.fs");
     shader.use();
 
-    camera = Camera(cameraPos, cameraPos + cameraFront, cameraUp, &shader, false);
+    camera = Camera(cameraPos, cameraPos + cameraFront, cameraUp, &shader, false, 0.1);
 
     //Create a vertex array object
     unsigned int VAO;
@@ -229,7 +230,6 @@ int main()
             
         glfwGetCursorPos(window, &mouseX, &mouseY);
         glfwGetFramebufferSize(window, &widthFrame, &heightFrame);
-        camera.UpdatePerspective(glm::radians(45.0), 0.01, 100.0, (float)widthFrame/heightFrame);
 
 
         shader.SetInt("ourTexture", 0);
@@ -356,6 +356,10 @@ void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos) {
         camera.TurnCamera(direction);
     
     }
+}
+
+void ScrollCallback(GLFWwindow* window, double xpos, double ypos) {
+    camera.ZoomCamera(ypos);
 }
 
 #pragma endregion
