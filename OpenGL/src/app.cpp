@@ -15,7 +15,9 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window, Camera* camera, float deltaSPD);
-void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void foo(GLFWwindow* window, double xpos, double ypos);
 
 float xposBuffer = 480;
 float yposBuffer = 270;
@@ -24,6 +26,7 @@ float height = 960;
 float width = 540;
 
 bool firstMouse = true;
+bool mouseEnabled = false;
 
 float yawAngle;
 float pitchAngle;
@@ -131,7 +134,8 @@ int main()
         return -1;
     }
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, MouseCallback);
+    glfwSetCursorPosCallback(window, MouseMoveCallback);
+    glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
     Shader shader =  Shader("./shader/vertex.vs", "./shader/fragment.fs");
     shader.use();
@@ -199,7 +203,6 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
     while (!glfwWindowShouldClose(window))
@@ -290,47 +293,69 @@ void processInput(GLFWwindow* window, Camera* camera, float deltaSPD) {
         camera->MoveCamera(-camera->cameraUp, cameraSPD);
     }
 
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
 
 
-void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        mouseEnabled = true;
+    }
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        mouseEnabled = false;
+        firstMouse = true;
+    }
 
-    if (firstMouse) {
+}
+void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos) {
+
+    if (mouseEnabled) {
+        if (firstMouse) {
+            xposBuffer = xpos;
+            yposBuffer = ypos;
+            firstMouse = false;
+        }
+        float sensitivity = 0.1f;
+        float deltaX = xpos - xposBuffer;
+        float deltaY = ypos - yposBuffer;
+
         xposBuffer = xpos;
         yposBuffer = ypos;
-        firstMouse = false;
-    }
-    float sensitivity = 0.1f;
-    float deltaX = xpos - xposBuffer;
-    float deltaY = ypos - yposBuffer;
 
-    xposBuffer = xpos;
-    yposBuffer = ypos;
-
-    deltaX *= sensitivity;
-    deltaY *= sensitivity;
+        deltaX *= sensitivity;
+        deltaY *= sensitivity;
 
 
-    if (pitchAngle > 89.0f)
-        pitchAngle = 89.0f;
-    if (pitchAngle < -89.0f)
-        pitchAngle = -89.0f;
+        if (pitchAngle > 89.0f)
+            pitchAngle = 89.0f;
+        if (pitchAngle < -89.0f)
+            pitchAngle = -89.0f;
 
-    yawAngle += deltaX;
-    pitchAngle += deltaY;
+        if (yawAngle < -180) {
+            yawAngle += 360;
+        }
+        else if (yawAngle > 180) {
+            yawAngle -= 360;
+        }
 
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle)); // Note that we convert the angle to radians first
-    direction.y = -sin(glm::radians(pitchAngle));
-    direction.z = sin(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
+        yawAngle += deltaX;
+        pitchAngle += deltaY;
 
-    direction = glm::normalize(direction);
+        glm::vec3 direction;
+        direction.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle)); // Note that we convert the angle to radians first
+        direction.y = -sin(glm::radians(pitchAngle));
+        direction.z = sin(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
 
-    camera.TurnCamera(direction);
+        direction = glm::normalize(direction);
+
+        camera.TurnCamera(direction);
     
+    }
 }
 
 #pragma endregion

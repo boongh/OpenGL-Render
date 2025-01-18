@@ -80,7 +80,7 @@ void Camera::MoveCamera(glm::vec3 direction, float speed) {
 
 void Camera::TurnCamera(glm::vec3 front) {
 
-	cameraFacing = cameraPos + front * 10.0f;
+	cameraFacing = cameraPos + front;
 	cameraFront = glm::normalize(front);
 	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 	
