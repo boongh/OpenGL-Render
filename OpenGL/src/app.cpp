@@ -23,7 +23,8 @@ float yposBuffer = 270;
 float height = 960;
 float width = 540;
 
-glm::vec3 direction;
+bool firstMouse = true;
+
 float yawAngle;
 float pitchAngle;
 
@@ -95,13 +96,11 @@ glm::vec3 cubePositions[] = {
 
 float cubeRotation[10] = { 0.0f };
 
-Shader shader;
-
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-Camera camera(cameraPos, cameraPos + cameraFront, cameraUp, &shader, false);
+Camera camera;
 
 #pragma endregion
 
@@ -134,8 +133,10 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, MouseCallback);
 
-    Shader shader("./shader/vertex.vs", "./shader/fragment.fs");
+    Shader shader =  Shader("./shader/vertex.vs", "./shader/fragment.fs");
     shader.use();
+
+    camera = Camera(cameraPos, cameraPos + cameraFront, cameraUp, &shader, false);
 
     //Create a vertex array object
     unsigned int VAO;
@@ -184,21 +185,21 @@ int main()
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
+    
+        //Rotation
+    #pragma region Camera Rotation
+        yawAngle = -90.0f;
+        pitchAngle = 0;
+
+
+    #pragma endregion
+
     float lastTime = 0.0;
     float deltaTime = 0.0;
 
     glEnable(GL_DEPTH_TEST);
 
-    //Rotation
-#pragma region Camera Rotation
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    yawAngle = -90.0f;
-    pitchAngle = 0;
-    direction.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle)); // Note that we convert the angle to radians first
-    direction.z = sin(glm::radians(yawAngle));
-    direction.y = sin(glm::radians(pitchAngle)) * cos(glm::radians(pitchAngle));;
-
-#pragma endregion
 
 
     while (!glfwWindowShouldClose(window))
@@ -294,7 +295,14 @@ void processInput(GLFWwindow* window, Camera* camera, float deltaSPD) {
     }
 }
 
+
 void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+
+    if (firstMouse) {
+        xposBuffer = xpos;
+        yposBuffer = ypos;
+        firstMouse = false;
+    }
     float sensitivity = 0.1f;
     float deltaX = xpos - xposBuffer;
     float deltaY = ypos - yposBuffer;
@@ -305,15 +313,24 @@ void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
     deltaX *= sensitivity;
     deltaY *= sensitivity;
 
-    yawAngle += xposBuffer;
-    pitchAngle += yposBuffer;
 
     if (pitchAngle > 89.0f)
         pitchAngle = 89.0f;
     if (pitchAngle < -89.0f)
         pitchAngle = -89.0f;
 
-    camera.cameraFront = direction;
+    yawAngle += deltaX;
+    pitchAngle += deltaY;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle)); // Note that we convert the angle to radians first
+    direction.y = -sin(glm::radians(pitchAngle));
+    direction.z = sin(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
+
+    direction = glm::normalize(direction);
+
+    camera.TurnCamera(direction);
+    
 }
 
 #pragma endregion

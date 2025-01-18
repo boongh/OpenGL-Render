@@ -39,6 +39,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glDeleteShader(fragment);
 }
 
+Shader::Shader() {
+
+}
 //Destructor for freeing memory
 Shader::~Shader() {
     int success;

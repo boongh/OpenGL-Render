@@ -37,6 +37,7 @@ public:
 
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
+    Shader();
 
     //Destructor for freeing memory
     ~Shader();

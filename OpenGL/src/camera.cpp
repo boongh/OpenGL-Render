@@ -20,6 +20,10 @@ Camera::Camera(glm::vec3 pos, glm::vec3 lookAt, glm::vec3 up, Shader* shaderRefI
 	shaderRef->SetMatrix("projection", 1, GL_FALSE, projection);
 }
 
+Camera::Camera() {
+
+}
+
 void Camera::UpdateAll(glm::vec3 pos, glm::vec3 facing, glm::vec3 up,
 	float fov, float nearClip, float farClip, float aspectRatio) {
 	projection = glm::perspective(fov, aspectRatio, nearClip, farClip);
@@ -71,6 +75,16 @@ void Camera::MoveCamera(glm::vec3 direction, float speed) {
 	cameraFront = glm::normalize(cameraFacing - cameraPos);
 	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 
+	shaderRef->SetMatrix("view", 1, GL_FALSE, view);
+}
+
+void Camera::TurnCamera(glm::vec3 front) {
+
+	cameraFacing = cameraPos + front * 10.0f;
+	cameraFront = glm::normalize(front);
+	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+	
+	view = glm::lookAt(cameraPos, cameraFacing, cameraUp);
 	shaderRef->SetMatrix("view", 1, GL_FALSE, view);
 
 }
