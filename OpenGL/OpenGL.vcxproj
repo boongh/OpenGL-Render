@@ -175,8 +175,12 @@
     <ClCompile Include="src\textureloader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\fragment.fs" />
-    <None Include="shader\vertex.vs" />
+    <None Include="shader\NormalShader\fragment.frag" />
+    <None Include="shader\LightingShader\lightfragment.frag" />
+    <None Include="shader\LightingShader\lightvertex.vert" />
+    <None Include="shader\LightSourceShader\lightsourcefragment.frag" />
+    <None Include="shader\LightSourceShader\lightsourcevertex.vert" />
+    <None Include="shader\NormalShader\vertex.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Texture\awesomeface.png" />

@@ -17,7 +17,9 @@ private:
     unsigned int m_program;
 
 
+
 public:
+    static Shader* currentShader;
 
     enum MatSizeShader
     {
@@ -46,7 +48,7 @@ public:
     void CompileShader(unsigned int* target, const char* sourcePath, GLenum mode, const char* errorMes);
 
     // use/activate the shader
-    void use();
+    void Use();
 
     // utility uniform functions
     void SetBool(const std::string& name, bool value) const;
@@ -76,5 +78,12 @@ public:
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x2 mat);
     void SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat);
+
+    void SetVec(const std::string& name, int count, glm::vec1 vec);
+	void SetVec(const std::string& name, int count, glm::vec2 vec);
+    void SetVec(const std::string& name, int count, glm::vec3 vec);
+    void SetVec(const std::string& name, int count, glm::vec4 vec);
+
+
 };
 #endif

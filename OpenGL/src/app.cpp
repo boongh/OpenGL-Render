@@ -19,6 +19,8 @@ void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void ScrollCallback(GLFWwindow* window, double xpos, double ypos);
 
+float ambientStrength = 0.1f;
+
 float xposBuffer = 480;
 float yposBuffer = 270;
 
@@ -40,64 +42,6 @@ float vertices[] = {
     -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
 };
 
-float threeDVertices[] = {
--0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
- 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
- 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
- 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
--0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
--0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
--0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
- 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
- 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
- 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
--0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
--0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
--0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
--0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
--0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
--0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
--0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
--0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
- 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
- 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
- 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
- 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
- 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
- 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
--0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
- 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
- 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
- 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
--0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
--0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
--0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
- 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
- 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
- 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
--0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
--0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
-
-glm::vec3 cubePositions[] = {
-    glm::vec3(0.0f,  0.0f,  0.0f),
-    glm::vec3(2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),
-    glm::vec3(1.5f,  2.0f, -2.5f),
-    glm::vec3(1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
-float cubeRotation[10] = { 0.0f };
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -105,10 +49,13 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 Camera camera;
 
+
+
 #pragma endregion
 
 int main()
 {
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -138,25 +85,105 @@ int main()
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
     glfwSetScrollCallback(window, ScrollCallback);
 
-    Shader shader =  Shader("./shader/vertex.vs", "./shader/fragment.fs");
-    shader.use();
 
-    camera = Camera(cameraPos, cameraPos + cameraFront, cameraUp, &shader, false, 0.1);
+    //Shader shader =  Shader("./shader/NormalShader/vertex.vs", "./shader/NormalShader/fragment.fs");
+
+	Shader shader = Shader("./shader/NormalShader/vertex.vs", "./shader/NormalShader/fragment.fs");
+    shader.Use();
+
+    Shader lightShader = Shader("./shader/LightingShader/lightvertex.vert", "./shader/LightingShader/lightfragment.frag");
+	Shader lightSourceShader = Shader("./shader/LightSourceShader/lightsourcevertex.vert", "./shader/LightSourceShader/lightsourcefragment.frag");
+
+
+    lightShader.Use();
+
+    lightShader.SetVec("lightColor", 1, glm::vec3(1.0f, 1.0f, 1.0f));
+    lightShader.SetVec("objectColor", 1, glm::vec3(1.0f, 1.0f, 0.0f));
+	lightShader.SetFloat("ambientStrength", ambientStrength);
+
+
+    lightSourceShader.Use();
+
+    lightSourceShader.SetVec("lightColor", 1, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    camera = Camera(cameraPos, cameraPos + cameraFront, cameraUp, &lightShader, false, 45);
+
+#pragma region Opaque objects
+
+    float threeDVertices[] = {
+    //Position(xyz) Texture coordinate(xyz)
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    float cubeRotation[10] = { 0.0f };
+
 
     //Create a vertex array object
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    unsigned int opaqueVAO, opaqueVBO;
+    glGenVertexArrays(1, &opaqueVAO);
+    glGenBuffers(1, &opaqueVBO);
 
     //assigned VBO as a buffer of GL_ARRAY_BUFFER
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, opaqueVBO);
     //Copy data from VBO to the GPU as static
     glBufferData(GL_ARRAY_BUFFER, sizeof(threeDVertices), threeDVertices, GL_STATIC_DRAW);
 
+    glBindVertexArray(opaqueVAO);
 
-    //How the program should interpret the vertex data
+    //How the program should interpret the vertex data / buffer data
     //https://learnopengl.com/Getting-started/Hello-Triangle#:~:text=The%20function%20glVertexAttribPointer,detail%20later%20on
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -164,6 +191,51 @@ int main()
     //texture coord
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+#pragma endregion
+
+
+#pragma region Light objects
+
+    float lightCubeVertices[]{
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f
+    };
+
+    glm::vec3 lightCubePosition[] = {
+        glm::vec3(2.0f,  2.0f,  0.0f),
+    };
+
+
+    // Light Objects VAO Setup
+    unsigned int lightVAO, lightVBO;
+    glGenVertexArrays(1, &lightVAO);
+    glGenBuffers(1, &lightVBO);
+
+    // Create a VBO for the light object data
+    glBindVertexArray(lightVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(threeDVertices), threeDVertices, GL_STATIC_DRAW);
+
+
+    //How the program should interpret the vertex data / buffer data
+    //https://learnopengl.com/Getting-started/Hello-Triangle#:~:text=The%20function%20glVertexAttribPointer,detail%20later%20on
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //texture coord
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // At this point, both VAOs are set up independently with separate buffers.
+
+#pragma endregion
+
 
     //Create element buffer object
     /*
@@ -218,7 +290,7 @@ int main()
         processInput(window, &camera, deltaTime * 10);
 
         //Render Stage
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
 
@@ -231,32 +303,55 @@ int main()
         glfwGetCursorPos(window, &mouseX, &mouseY);
         glfwGetFramebufferSize(window, &widthFrame, &heightFrame);
 
+        lightShader.SetInt("ourTexture", 0);
+        lightShader.SetInt("smileytexture", 1);
+        //lightShader.SetFloat("u_time", time);
+        lightShader.SetFloat("cursorPos", (float)mouseX, (float)mouseY);
+        lightShader.SetFloat("u_resolution", (float)widthFrame, (float)heightFrame);
 
-        shader.SetInt("ourTexture", 0);
-        shader.SetInt("smileytexture", 1);
-        shader.SetFloat("u_time", time);
-        shader.SetFloat("cursorPos", (float)mouseX, (float)mouseY);
-        shader.SetFloat("u_resolution", (float)widthFrame, (float)heightFrame);
+		glBindVertexArray(opaqueVAO);
+
+		lightShader.Use();
+        camera.UpdateMatrix();
+
         for (int i = 0; i < sizeof(cubePositions) / sizeof(cubePositions[i]); i++) {
-            cubeRotation[i] += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
+            float cacheRotation = cubeRotation[i];
+            cacheRotation += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
+
+			if (cacheRotation > 360) {
+				cacheRotation = 0;
+			}
+            else if (cacheRotation < 0) {
+				cacheRotation = 360;
+            }
+
+			cubeRotation[i] = cacheRotation;
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             model = glm::rotate(model, glm::radians(cubeRotation[i]), glm::vec3(1.0, 1.0, 0.0));
-            shader.SetMatrix("model", 1, GL_FALSE, model);
+            lightShader.SetMatrix("model", 1, GL_FALSE, model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         //std::cout << mouseX << " " << mouseY << " " << widthFrame << " " << heightFrame <<  std::endl;
+        
+		glBindVertexArray(lightVAO);
 
-        //activate the shader program
-
+		lightSourceShader.Use();
+        for (int i = 0; i < sizeof(lightCubePosition) / sizeof(lightCubePosition[i]); i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, lightCubePosition[i]);
+            lightSourceShader.SetMatrix("model", 1, GL_FALSE, model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &opaqueVBO);
+    glDeleteVertexArrays(1, &opaqueVAO);
+	glDeleteVertexArrays(1, &lightVAO);
 
     glfwTerminate();
     return 0;

@@ -15,10 +15,6 @@ class Camera {
 private:
 
 public:
-
-
-
-	Shader* shaderRef;
 	
 	bool viewLock;
 
@@ -42,8 +38,9 @@ public:
 		float nearClip = 0.001, float farClip = 100000.0, float aspectRatio = 1.7778f);
 	void UpdateAll(glm::vec3 pos, glm::vec3 facing, glm::vec3 up,
 		float fov, float nearClip, float farClip, float aspectRatio);
-	void UpdateView(glm::vec3 pos, glm::vec3 facing, glm::vec3 up);
+	void UpdateView();
 	void UpdatePerspective(float fov, float nearClip, float farClip, float aspectRatio);
+	void UpdateMatrix();
 	void SetCameraPosition(glm::vec3 pos);
 	void MoveCamera(glm::vec3 direction, float speed);
 	void TurnCamera(glm::vec3 front);

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <gtc/type_ptr.hpp>
 
+Shader* Shader::currentShader = nullptr;
 
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
@@ -118,8 +119,9 @@ void Shader::CompileShader(unsigned int* target, const char* sourcePath, GLenum 
     *target = shader;
 }
 
-void Shader::use() {
+void Shader::Use() {
     glUseProgram(m_program);
+	currentShader = this;
 }
 
 void Shader::SetInt(const std::string& name, int value) const
@@ -141,7 +143,12 @@ void Shader::SetInt(const std::string& name, int value1, int value2, int value3,
 
 void Shader::SetFloat(const std::string& name, float value) const
 {
-    glUniform1f(glGetUniformLocation(m_program, name.c_str()), value);
+	GLint loc = glGetUniformLocation(m_program, name.c_str());
+	if (loc == -1) {
+		std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+    	throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+	}
+    glUniform1f(loc, value);
 }
 void Shader::SetFloat(const std::string& name, float value1, float value2) const
 {
@@ -178,8 +185,53 @@ void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, 
     glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
 };
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x2 mat) {
-    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+    GLint loc = glGetUniformLocation(m_program, name.c_str());
+	if (loc == -1) {
+		std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+
+		throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+    }
+    glUniformMatrix4fv(loc, count, transpose, glm::value_ptr(mat));
 };
 void Shader::SetMatrix(const std::string& name, int count, GLboolean transpose, glm::mat4x3 mat) {
-    glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), count, transpose, glm::value_ptr(mat));
+    GLint loc = glGetUniformLocation(m_program, name.c_str());
+    if (loc == -1) {
+        std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+        throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+    }
+    glUniformMatrix4fv(loc, count, transpose, glm::value_ptr(mat));
+};
+
+void Shader::SetVec(const std::string& name, int count, glm::vec1 vec) {
+	GLint loc = glGetUniformLocation(m_program, name.c_str());
+	if (loc == -1) {
+		std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+		throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+	}
+    glUniform1fv(loc, count, &vec[0]);
+};
+void Shader::SetVec(const std::string& name, int count, glm::vec2 vec) {
+    GLint loc = glGetUniformLocation(m_program, name.c_str());
+    if (loc == -1) {
+        std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+        throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+    }
+    glUniform2fv(loc, count, &vec[0]);
+};
+void Shader::SetVec(const std::string& name, int count, glm::vec3 vec) {
+    GLint loc = glGetUniformLocation(m_program, name.c_str());
+
+    if (loc == -1) {
+        std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+        throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+    }
+    glUniform3fv(loc, count, &vec[0]);
+};
+void Shader::SetVec(const std::string& name, int count, glm::vec4 vec) {
+    GLint loc = glGetUniformLocation(m_program, name.c_str());
+    if (loc == -1) {
+        std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND\n" << name << std::endl;
+        throw std::runtime_error("ERROR::SHADER::UNIFORM_NOT_FOUND\n" + name);
+    }
+    glUniform4fv(loc, count, &vec[0]);
 };
