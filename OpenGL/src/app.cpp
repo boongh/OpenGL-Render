@@ -9,6 +9,7 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include "mesh.h"
 
 
 #pragma region Initialization values and function declaration
@@ -110,52 +111,95 @@ int main()
 
 #pragma region Opaque objects
 
-    float threeDVertices[] = {
-    //Position(xyz) Texture coordinate(xyz)
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    float cubeVertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
     };
 
-    glm::vec3 cubePositions[] = {
+    Vertex cubeVerticesNew[36] = {
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+
+        Vertex{-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+
+        Vertex{0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+
+        Vertex{-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+        Vertex{-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0, 0.0,  glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
+    };
+
+    std::vector<glm::vec3> cubePositions = {
         glm::vec3(0.0f,  0.0f,  0.0f),
         glm::vec3(2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -179,17 +223,17 @@ int main()
     //assigned VBO as a buffer of GL_ARRAY_BUFFER
     glBindBuffer(GL_ARRAY_BUFFER, opaqueVBO);
     //Copy data from VBO to the GPU as static
-    glBufferData(GL_ARRAY_BUFFER, sizeof(threeDVertices), threeDVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
     glBindVertexArray(opaqueVAO);
 
     //How the program should interpret the vertex data / buffer data
     //https://learnopengl.com/Getting-started/Hello-Triangle#:~:text=The%20function%20glVertexAttribPointer,detail%20later%20on
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //texture coord
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
 #pragma endregion
@@ -220,16 +264,16 @@ int main()
     glBindVertexArray(lightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(threeDVertices), threeDVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
 
     //How the program should interpret the vertex data / buffer data
     //https://learnopengl.com/Getting-started/Hello-Triangle#:~:text=The%20function%20glVertexAttribPointer,detail%20later%20on
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //texture coord
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // At this point, both VAOs are set up independently with separate buffers.
