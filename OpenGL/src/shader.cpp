@@ -124,6 +124,11 @@ void Shader::Use() {
 	currentShader = this;
 }
 
+unsigned int Shader::GetProgram()
+{
+    return m_program;
+}
+
 void Shader::SetInt(const std::string& name, int value) const
 {
     glUniform1i(glGetUniformLocation(m_program, name.c_str()), value);

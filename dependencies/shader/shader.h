@@ -50,6 +50,8 @@ public:
     // use/activate the shader
     void Use();
 
+    unsigned int GetProgram();
+
     // utility uniform functions
     void SetBool(const std::string& name, bool value) const;
     // Overload for a single int (glUniform1i)

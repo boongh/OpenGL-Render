@@ -4,17 +4,21 @@
 #include <gtc/matrix_transform.hpp>
 
 
-MeshData::MeshData(Vertex& vertices, int num)
+MeshData::MeshData(const Vertex* vertices, int num)
 {
-	faceCount = num;
-	memcpy(this->vertices, &vertices, num * sizeof(Vertex));
+	verticesCount = num;
+	this->vertices = (Vertex*)malloc(num * sizeof(Vertex));
+	if (this->vertices == nullptr) {
+		throw std::bad_alloc();
+	}
+	memcpy(this->vertices, vertices, num * sizeof(Vertex));
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//Copy data from VBO to the GPU as static
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * num, &this->vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, num * sizeof(Vertex), this->vertices, GL_STATIC_DRAW);
 
 	glBindVertexArray(VAO);
 
@@ -30,7 +34,7 @@ MeshData::MeshData(Vertex& vertices, int num)
 
 
 	//Texture Coordinate
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
 
@@ -53,12 +57,27 @@ MeshData::MeshData(Vertex& vertices, int num)
 	glEnableVertexAttribArray(6);
 }
 
-void MeshManager::CreateInstance(glm::vec3* worldPosRef, glm::vec3* rotationRef)
+MeshManager::MeshManager(const Vertex* vertices, int num, const Shader& shader) : Mesh(vertices, num)
+{
+	ShaderInUse = shader;
+}
+
+MeshManager::~MeshManager()
+{
+}
+
+MeshInstance* MeshManager::CreateInstance(glm::vec3 worldPosRef, glm::vec3 rotationRef)
 {
 	MeshInstance newInstance = MeshInstance{
 		worldPosRef,
 		rotationRef
 	};
+
+	MeshInstances.push_back(newInstance);
+
+	MeshInstance* returnInstance = &MeshInstances[MeshInstances.size() - 1];
+
+	return returnInstance;
 }
 
 MeshData::~MeshData()
@@ -66,30 +85,39 @@ MeshData::~MeshData()
 	free(vertices);
 }
 
+int MeshData::GetVertexCount()
+{
+	return verticesCount;
+}
+
 void SceneManager::RenderScene()
 {
 	//Draw all non-light source objects
-	for (int i = OpaqueMeshes.size() - 1; i >= 0; --i) {
-		MeshManager* meshManager = &OpaqueMeshes[i];
-		Shader* currentShader = meshManager->ShaderInUse;
-		glBindVertexArray(meshManager->Mesh->VAO);
+	for (int i = 0; i < OpaqueMeshes.size(); ++i) {
+		MeshManager* meshManager = OpaqueMeshes[i];
+		Shader* currentShader = &meshManager->ShaderInUse;
+		glBindVertexArray(meshManager->Mesh.VAO);
 		currentShader->Use();
-		for (int j = meshManager->MeshInstances.size() - 1; j >= 0; --j) {
-			MeshInstance* instance = meshManager->MeshInstances[j];
+		for (int j = 0; j < meshManager->MeshInstances.size(); ++j) {
+			MeshInstance& instance = meshManager->MeshInstances[j];
 			glm::mat4 model = glm::mat4(1.0f);
-			glm::vec3 rotation = *instance->rotation;
-			glm::vec3 translation = *instance->worldPostion;
+			glm::vec3 rotation = instance.rotation;
+			glm::vec3 translation = instance.worldPostion;
             model = glm::translate(model, translation);
 
 			//Rotate X Y Z separately
-			model = glm::rotate(model, rotation.x, glm::vec3(1.0, 0.0, 0.0));
-			model = glm::rotate(model, rotation.y, glm::vec3(0.0, 1.0, 0.0));
-			model = glm::rotate(model, rotation.z, glm::vec3(0.0, 0.0, 1.0));
-
+			model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0, 0.0, 0.0));
+			model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0, 1.0, 0.0));
+			model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0, 0.0, 1.0));
 			currentShader->SetMatrix("model", 1, GL_FALSE, model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, meshManager->Mesh.GetVertexCount());
 		}
 	}
+}
+
+void SceneManager::AddMeshManager(MeshManager* MManagerIn, ObjectType type)
+{
+	OpaqueMeshes.push_back(MManagerIn);
 }
 
 

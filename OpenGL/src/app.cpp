@@ -98,10 +98,10 @@ int main()
 
     lightShader.Use();
 
+
     lightShader.SetVec("lightColor", 1, glm::vec3(1.0f, 1.0f, 1.0f));
     lightShader.SetVec("objectColor", 1, glm::vec3(1.0f, 1.0f, 0.0f));
-	lightShader.SetFloat("ambientStrength", ambientStrength);
-
+    lightShader.SetFloat("ambientStrength", ambientStrength);
 
     lightSourceShader.Use();
 
@@ -155,7 +155,11 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
     };
 
-    Vertex cubeVerticesNew[36] = {
+    SceneManager scenemanager = SceneManager();
+
+    
+
+    constexpr Vertex cubeVerticesNew[36] = {
         Vertex{-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
         Vertex{0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
         Vertex{0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, glm::vec3(1.0, 1.0, 0.0), glm::vec3(1.0, 1.0, 1.0),  1, 0},
@@ -214,6 +218,16 @@ int main()
 
     float cubeRotation[10] = { 0.0f };
 
+
+    std::vector<MeshInstance*> Meshes;
+
+    MeshManager Opaque = MeshManager(&(cubeVerticesNew[0]), 36, lightShader);
+
+    scenemanager.AddMeshManager(&Opaque, SceneManager::ObjectType::Opaque);
+
+    for (int i = 0; i < sizeof(cubeRotation) / sizeof(cubeRotation[0]); i++) {
+        Meshes.push_back(Opaque.CreateInstance(cubePositions[i], glm::vec3(0, 0, 0)));
+    }
 
     //Create a vertex array object
     unsigned int opaqueVAO, opaqueVBO;
@@ -321,6 +335,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
 
+    scenemanager.ambient = glm::vec3(1.0, 1.0, 1.0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -334,7 +349,7 @@ int main()
         processInput(window, &camera, deltaTime * 10);
 
         //Render Stage
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
 
@@ -353,40 +368,54 @@ int main()
         lightShader.SetFloat("cursorPos", (float)mouseX, (float)mouseY);
         lightShader.SetFloat("u_resolution", (float)widthFrame, (float)heightFrame);
 
-		glBindVertexArray(opaqueVAO);
-
-		lightShader.Use();
         camera.UpdateMatrix();
+           
 
-        for (int i = 0; i < sizeof(cubePositions) / sizeof(cubePositions[i]); i++) {
-            float cacheRotation = cubeRotation[i];
-            cacheRotation += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
 
-			if (cacheRotation > 360) {
-				cacheRotation = 0;
+        //scenemanager.RenderScene();
+
+        lightShader.Use();
+
+        glBindVertexArray(opaqueVAO);
+
+
+        for (int i = 0; i < sizeof(cubeRotation) / sizeof(cubeRotation[0]); i++) {
+        
+            cubeRotation[i] += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
+			if (cubeRotation[i] > 360) {
+                cubeRotation[i] = 0;
 			}
-            else if (cacheRotation < 0) {
-				cacheRotation = 360;
+            else if (cubeRotation[i] < 0) {
+                cubeRotation[i] = 360;
             }
-
-			cubeRotation[i] = cacheRotation;
+        
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, glm::radians(cubeRotation[i]), glm::vec3(1.0, 1.0, 0.0));
+            glm::vec3 rotation = glm::vec3(cubeRotation[i],0,0);
+            glm::vec3 translation = cubePositions[i];
+            
+        
+            model = glm::translate(model, translation);
+        
+            //model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0, 0.0, 0.0));
+            //model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0, 1.0, 0.0));
+            //model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0, 0.0, 1.0));
+        
             lightShader.SetMatrix("model", 1, GL_FALSE, model);
+        
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         //std::cout << mouseX << " " << mouseY << " " << widthFrame << " " << heightFrame <<  std::endl;
         
-		glBindVertexArray(lightVAO);
+        /*lightSourceShader.Use();
+		glBindVertexArray(lightVAO);*/
 
-		lightSourceShader.Use();
+		/*lightSourceShader.Use();
         for (int i = 0; i < sizeof(lightCubePosition) / sizeof(lightCubePosition[i]); i++) {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, lightCubePosition[i]);
             lightSourceShader.SetMatrix("model", 1, GL_FALSE, model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        }*/
         glfwSwapBuffers(window);
         glfwPollEvents();
 

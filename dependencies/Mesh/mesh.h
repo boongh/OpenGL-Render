@@ -4,7 +4,7 @@
 #include "shader.h"
 
 
-#pragma pack(push, 12)
+#pragma pack(push, 1)
 struct Material {
 	glm::vec3 diffuse;
 	glm::vec3 specular;
@@ -14,8 +14,8 @@ struct Material {
 #pragma pack(pop)
 
 
-#pragma pack(push, 1)
-struct Vertex {
+#pragma pack(push, 64)
+struct alignas(64) Vertex {
 	float relativePosition[3];
 	float normal[3];
 	float textureCoordinate[2];
@@ -23,23 +23,26 @@ struct Vertex {
 };
 #pragma pack(pop)
 
+
 #pragma pack(push, 1)
 struct MeshData {
 private:
-	int faceCount;
+	int verticesCount;
 	Vertex* vertices;
 
 public:
-
+		
 	/// <summary>
 	/// Constructs a mesh from vertices and a material
 	/// </summary>
 	/// <param name="vertices"></param>
 	/// <param name="material"></param>
 
-	MeshData(Vertex& vertices, int num);
-
+	MeshData(const Vertex* vertices, int num);
 	~MeshData();
+
+	int GetVertexCount();
+
 	unsigned int VAO, VBO;
 };
 #pragma pack(pop)
@@ -49,10 +52,10 @@ struct MeshInstance {
 
 
 	//World position of the object center reference so it can be changed outside
-	glm::vec3* worldPostion;
+	glm::vec3 worldPostion;
 
 	//Rotation using fixed 3d axis coordinate reference so it can be change outside
-	glm::vec3* rotation;
+	glm::vec3 rotation;
 };
 
 
@@ -60,34 +63,34 @@ struct MeshInstance {
 class MeshManager {
 
 public:
-	MeshData* Mesh;
-	Shader* ShaderInUse;
+	MeshData Mesh;
+	Shader ShaderInUse = Shader(); // Initialize ShaderInUse
 	
-	MeshManager();
+	MeshManager(const Vertex* vertices, int num, const Shader& shader);
 	~MeshManager();
 
-	void CreateInstance(glm::vec3* worldPos, glm::vec3* cubePositions);
+	MeshInstance* CreateInstance(glm::vec3 worldPos, glm::vec3 rotation);
 	/// <summary>
 	/// Number of unique meshes, as in, meshes with the same 
 	/// </summary>
-	std::vector<MeshInstance*> MeshInstances;
+	std::vector<MeshInstance> MeshInstances;
 
 };
 
 
 class SceneManager {
+	std::vector<MeshManager*> OpaqueMeshes;
+	std::vector<MeshManager*> LightSources;
+
+public :
 	//Basically skybox;
 	glm::vec3 ambient;
-	std::vector<MeshManager> OpaqueMeshes;
-	std::vector<MeshManager> LightSources;
-
 	enum ObjectType
 	{
 		Opaque,
 		LightSource
 	};
 
-public :
 	void RenderScene();
 	void AddMeshManager(MeshManager* MManagerIn, ObjectType type);
 };
