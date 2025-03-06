@@ -98,6 +98,8 @@ void SceneManager::RenderScene()
 		Shader* currentShader = &meshManager->ShaderInUse;
 		glBindVertexArray(meshManager->Mesh.VAO);
 		currentShader->Use();
+
+		currentShader->SetVec("ambientColor", 1, ambient);
 		for (int j = 0; j < meshManager->MeshInstances.size(); ++j) {
 			MeshInstance& instance = meshManager->MeshInstances[j];
 			glm::mat4 model = glm::mat4(1.0f);
@@ -117,7 +119,27 @@ void SceneManager::RenderScene()
 
 void SceneManager::AddMeshManager(MeshManager* MManagerIn, ObjectType type)
 {
-	OpaqueMeshes.push_back(MManagerIn);
+	for (MeshManager* m : OpaqueMeshes) {
+		if (MManagerIn == m) {
+			continue;
+		}
+		else {
+			OpaqueMeshes.push_back(MManagerIn);
+		}
+	}
+}
+
+void SceneManager::RemoveMeshManager()
+{
+	bool found = false;
+	for (MeshManager* m : OpaqueMeshes) {
+		if (MManagerIn == m) {
+			continue;
+		}
+		else {
+			OpaqueMeshes.push_back(MManagerIn);
+		}
+	}
 }
 
 

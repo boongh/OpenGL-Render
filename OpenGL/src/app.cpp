@@ -20,7 +20,7 @@ void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void ScrollCallback(GLFWwindow* window, double xpos, double ypos);
 
-float ambientStrength = 0.1f;
+float ambientStrength = 0.5f;
 
 float xposBuffer = 480;
 float yposBuffer = 270;
@@ -99,7 +99,7 @@ int main()
     lightShader.Use();
 
 
-    lightShader.SetVec("lightColor", 1, glm::vec3(1.0f, 1.0f, 1.0f));
+    //lightShader.SetVec("lightColor", 1, glm::vec3(1.0f, 1.0f, 1.0f));
     lightShader.SetVec("objectColor", 1, glm::vec3(1.0f, 1.0f, 0.0f));
     lightShader.SetFloat("ambientStrength", ambientStrength);
 
@@ -335,7 +335,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
 
-    scenemanager.ambient = glm::vec3(1.0, 1.0, 1.0);
+    scenemanager.ambient = glm::vec3(1.0, 1.0, 0.0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -374,36 +374,37 @@ int main()
 
         //scenemanager.RenderScene();
 
-        lightShader.Use();
+        //`lightShader.Use();
+        //`
+        //`glBindVertexArray(opaqueVAO);
 
-        glBindVertexArray(opaqueVAO);
+        scenemanager.RenderScene();
 
-
-        for (int i = 0; i < sizeof(cubeRotation) / sizeof(cubeRotation[0]); i++) {
-        
-            cubeRotation[i] += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
-			if (cubeRotation[i] > 360) {
-                cubeRotation[i] = 0;
-			}
-            else if (cubeRotation[i] < 0) {
-                cubeRotation[i] = 360;
-            }
-        
-            glm::mat4 model = glm::mat4(1.0f);
-            glm::vec3 rotation = glm::vec3(cubeRotation[i],0,0);
-            glm::vec3 translation = cubePositions[i];
-            
-        
-            model = glm::translate(model, translation);
-        
-            //model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0, 0.0, 0.0));
-            //model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0, 1.0, 0.0));
-            //model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0, 0.0, 1.0));
-        
-            lightShader.SetMatrix("model", 1, GL_FALSE, model);
-        
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        //for (int i = 0; i < sizeof(cubeRotation) / sizeof(cubeRotation[0]); i++) {
+        //
+        //    cubeRotation[i] += deltaTime * std::pow(glm::length(cubePositions[i] - camera.cameraPos), 2);
+		//	if (cubeRotation[i] > 360) {
+        //        cubeRotation[i] = 0;
+		//	}
+        //    else if (cubeRotation[i] < 0) {
+        //        cubeRotation[i] = 360;
+        //    }
+        //
+        //    glm::mat4 model = glm::mat4(1.0f);
+        //    glm::vec3 rotation = glm::vec3(cubeRotation[i],0,0);
+        //    glm::vec3 translation = cubePositions[i];
+        //    
+        //
+        //    model = glm::translate(model, translation);
+        //
+        //    //model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0, 0.0, 0.0));
+        //    //model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0, 1.0, 0.0));
+        //    //model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0, 0.0, 1.0));
+        //
+        //    lightShader.SetMatrix("model", 1, GL_FALSE, model);
+        //
+        //    glDrawArrays(GL_TRIANGLES, 0, 36);
+        //}
         //std::cout << mouseX << " " << mouseY << " " << widthFrame << " " << heightFrame <<  std::endl;
         
         /*lightSourceShader.Use();

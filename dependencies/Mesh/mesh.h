@@ -93,4 +93,5 @@ public :
 
 	void RenderScene();
 	void AddMeshManager(MeshManager* MManagerIn, ObjectType type);
+	void RemoveMeshManager();
 };
