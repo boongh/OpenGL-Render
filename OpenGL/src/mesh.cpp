@@ -129,17 +129,5 @@ void SceneManager::AddMeshManager(MeshManager* MManagerIn, ObjectType type)
 	}
 }
 
-void SceneManager::RemoveMeshManager()
-{
-	bool found = false;
-	for (MeshManager* m : OpaqueMeshes) {
-		if (MManagerIn == m) {
-			continue;
-		}
-		else {
-			OpaqueMeshes.push_back(MManagerIn);
-		}
-	}
-}
 
 
